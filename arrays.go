@@ -4,33 +4,32 @@ import "errors"
 
 func groupInit(a ...dataCell) *group {
 	//initialize a group with the given data cells
-	g := new(group)
+	var first *group
 	var tempLast *group
-	i := 1
-	for i = 1; i < len(a)+1; i++ {
+	for i := 0; i < len(a); i++ {
 		temp := new(group)
-		if i == len(a) {
-			temp.next = nil
-		} else if i != 1 {
+		if i == len(a)-1 {
+			temp.next = temp
+		} else if i != 0 {
 			tempLast.next = temp
 		} else {
-			g.next = temp
+			first = temp
 		}
-		temp.first = g
+		temp.first = temp
 		temp.index = i
-		temp.value = a[i-1]
+		temp.value = a[i]
 		tempLast = temp
 
 	}
 	tempBruh := tempLast.first
-	for i = 1; i < len(a)+1; i++ {
+	for i := 0; i < len(a); i++ {
 		tempBruh.last = tempLast
 	}
-	return g
+	return first
 }
 func groupAt(index int, bruh *group) dataCell {
 	temp := bruh
-	for temp.next != nil {
+	for temp.next != temp {
 		if temp.index == index {
 			return temp.value
 		}
@@ -59,11 +58,13 @@ func groupAdd(index int, data dataCell, bruh *group) error {
 	g.value = data
 	g.first = bruh.first
 	g.last = g
-	g.next = nil
+	g.next = g
 	temp = bruh.first
-	for temp.next != nil {
+	for {
+		if temp.next == temp {
+			break
+		}
 		temp.last = g
-		temp = temp.next
 	}
 	return err
 }
