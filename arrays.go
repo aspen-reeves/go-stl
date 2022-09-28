@@ -1,39 +1,51 @@
 package main
 
-import (
-	"fmt"
-	"math/rand"
-	"strconv"
-	"time"
-)
-
-func groupInit(a ...dataCell) []group {
-	array := make([]group, len(a))
-	for i := 0; i < len(a); i++ {
-		array[i] = group{
-			index: i,
-			value: a[i],
+func groupInit(a ...dataCell) *group {
+	//initialize a group with the given data cells
+	g := new(group)
+	var tempLast *group
+	i := 1
+	for i = 1; i < len(a)+1; i++ {
+		temp := new(group)
+		if i == len(a) {
+			temp.next = nil
+		} else if i != 1 {
+			tempLast.next = temp
+		} else {
+			g.next = temp
 		}
-	}
-	rand.Seed(time.Now().UnixNano())
+		temp.first = g
+		temp.index = i
+		temp.value = a[i-1]
+		tempLast = temp
 
-	rand.Shuffle(len(array), func(i, j int) { array[i], array[j] = array[j], array[i] })
-	return array
+	}
+	tempBruh := tempLast.first
+	for i = 1; i < len(a)+1; i++ {
+		tempBruh.last = tempLast
+	}
+	return g
 }
-func groupAt(index int, a []group) dataCell {
-	//group the data cells at index
-	for i := 0; i < len(a); i++ {
-		if a[i].index == index {
-			return a[i].value
+func groupAt(index int, bruh *group) dataCell {
+	temp := bruh
+	for temp.next != nil {
+		if temp.index == index {
+			return temp.value
 		}
+		temp = temp.next
 	}
-	return dataCell{}
+	var nope dataCell
+	return nope
+
 }
 
 type group struct {
 	//group cell
+	first *group
+	last  *group
 	index int
 	value dataCell
+	next  *group
 }
 type dataCell struct {
 	I int
@@ -43,7 +55,7 @@ type dataCell struct {
 	C rune
 }
 
-func groupSort(b []group) []group {
+/*func groupSort(b []group) []group {
 	//sort the array using bogo sort
 	//convert the array to an array of ints
 
@@ -106,3 +118,4 @@ func isSorted(a []int) bool {
 	}
 	return true
 }
+*/
