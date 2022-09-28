@@ -38,6 +38,9 @@ func groupAt(index int, bruh *group) dataCell {
 	return nope
 
 }
+func groupAdd(index int, bruh *group) {
+
+}
 
 type group struct {
 	//group cell
