@@ -1,5 +1,7 @@
 package main
 
+import "errors"
+
 func groupInit(a ...dataCell) *group {
 	//initialize a group with the given data cells
 	g := new(group)
@@ -38,8 +40,32 @@ func groupAt(index int, bruh *group) dataCell {
 	return nope
 
 }
-func groupAdd(index int, bruh *group) {
-
+func groupAdd(index int, data dataCell, bruh *group) error {
+	temp := bruh
+	var err error = nil
+	for {
+		if temp.index == index {
+			err = errors.New("Index already exists")
+			return err
+		}
+		if temp.next == nil {
+			break
+		}
+		temp = temp.next
+	}
+	g := new(group)
+	temp.next = g
+	g.index = index
+	g.value = data
+	g.first = bruh.first
+	g.last = g
+	g.next = nil
+	temp = bruh.first
+	for temp.next != nil {
+		temp.last = g
+		temp = temp.next
+	}
+	return err
 }
 
 type group struct {
