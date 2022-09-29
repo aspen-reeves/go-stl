@@ -1,81 +1,19 @@
 package main
 
-import "errors"
-
-func groupInit(a ...dataCell) *group {
-	//initialize a group with the given data cells
-	var first *group
-	var tempLast *group
-	for i := 0; i < len(a); i++ {
-		temp := new(group)
-		if i == len(a)-1 {
-			temp.next = temp
-		} else if i != 0 {
-			tempLast.next = temp
-		} else {
-			first = temp
-		}
-		temp.first = temp
-		temp.index = i
-		temp.value = a[i]
-		tempLast = temp
-
-	}
-	tempBruh := tempLast.first
-	for i := 0; i < len(a); i++ {
-		tempBruh.last = tempLast
-	}
-	return first
-}
-func groupAt(index int, bruh *group) dataCell {
-	temp := bruh
-	for temp.next != temp {
-		if temp.index == index {
-			return temp.value
-		}
-		temp = temp.next
-	}
-	var nope dataCell
-	return nope
-
-}
-func groupAdd(index int, data dataCell, bruh *group) error {
-	temp := bruh
-	var err error = nil
-	for {
-		if temp.index == index {
-			err = errors.New("Index already exists")
-			return err
-		}
-		if temp.next == nil {
-			break
-		}
-		temp = temp.next
-	}
-	g := new(group)
-	temp.next = g
-	g.index = index
-	g.value = data
-	g.first = bruh.first
-	g.last = g
-	g.next = g
-	temp = bruh.first
-	for {
-		if temp.next == temp {
-			break
-		}
-		temp.last = g
-	}
-	return err
-}
+import "fmt"
 
 type group struct {
+	head *node
+	tail *node
+}
+
+type node struct {
 	//group cell
-	first *group
-	last  *group
+	cell dataCell
+	//next node
+	next *node
+	//index of the node
 	index int
-	value dataCell
-	next  *group
 }
 type dataCell struct {
 	I int
@@ -83,6 +21,70 @@ type dataCell struct {
 	S string
 	F float64
 	C rune
+}
+
+func initGroup(data ...dataCell) group {
+	//create a new group
+	var newGroup group
+	//create a new node
+	newNode := new(node)
+	newNode.cell = data[0]
+	newNode.next = nil
+	//set the head and tail
+	newGroup.head = newNode
+	newGroup.tail = newNode
+	//add the rest of the nodes
+	if len(data) > 1 {
+		temp := newNode // temp is a pointer to the first node
+		for i := 1; i < len(data); i++ {
+			newNode = new(node)    // create a new node
+			newNode.cell = data[i] // set the cell
+			newNode.next = nil     // set the next node to nil
+			temp.next = newNode    // set the next node of the previous node to the new node
+			temp = newNode         // set the temp to the new node
+		}
+	}
+	return newGroup
+}
+func addNode(data dataCell, group group) {
+	//create a new node
+	var newNode node
+	newNode.cell = data
+	newNode.next = nil
+	//add the new node to the tail
+	group.tail.next = &newNode
+	//update the tail
+	group.tail = &newNode
+}
+func delNode(index int, group group) {
+	//find the node
+	var currentNode node
+	currentNode = *group.head
+	for currentNode.index != index {
+		currentNode = *currentNode.next
+	}
+	//delete the node
+	currentNode = *currentNode.next
+}
+func printGroup(group group) {
+	//print the group
+	var currentNode node
+	currentNode = *group.head
+	for currentNode.next != nil {
+		fmt.Println(currentNode.cell)
+		currentNode = *currentNode.next
+	}
+	fmt.Println(currentNode.cell)
+}
+func readNode(index int, group group) dataCell {
+	//find the node
+	var currentNode node
+	currentNode = *group.head
+	for currentNode.index != index {
+		currentNode = *currentNode.next
+	}
+	//return the cell
+	return currentNode.cell
 }
 
 /*func groupSort(b []group) []group {
