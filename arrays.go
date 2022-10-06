@@ -40,6 +40,7 @@ func initGroup(data ...dataCell) group {
 			newNode = new(node)    // create a new node
 			newNode.cell = data[i] // set the cell
 			newNode.next = nil     // set the next node to nil
+			newNode.index = i      // set the index
 			temp.next = newNode    // set the next node of the previous node to the new node
 			temp = newNode         // set the temp to the new node
 		}
@@ -81,6 +82,9 @@ func readNode(index int, group group) dataCell {
 	var currentNode node
 	currentNode = *group.head
 	for currentNode.index != index {
+		if currentNode.next == nil {
+			return dataCell{}
+		}
 		currentNode = *currentNode.next
 	}
 	//return the cell
